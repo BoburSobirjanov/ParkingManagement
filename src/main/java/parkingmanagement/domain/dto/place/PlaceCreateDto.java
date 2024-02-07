@@ -1,14 +1,12 @@
-package parkingmanagement.domain.dto;
+package parkingmanagement.domain.dto.place;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
 public class PlaceCreateDto {
     private String floor;
     private String place;

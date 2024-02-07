@@ -13,19 +13,19 @@ import java.util.List;
 @Service
 public class AuthenticationService {
     public  void authenticate(Claims claims, HttpServletRequest request) {
-        List<String> roles = (List<String>) claims.get("roles");
+        List<String> authorities = (List<String>) claims.get("authorities");
         String username = claims.getSubject();
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
                         username,
                         null,
-                        getRoles(roles)
+                        getAuthorities(authorities)
                 );
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
-    public static List<SimpleGrantedAuthority> getRoles(List<String> roles) {
+    public static List<SimpleGrantedAuthority> getAuthorities(List<String> roles) {
         return roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .toList();

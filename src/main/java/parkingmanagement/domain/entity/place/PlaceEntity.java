@@ -23,4 +23,6 @@ public class PlaceEntity extends BaseEntity {
     private PlaceType type;
     @OneToMany
     private List<OrderEntity> orders;
+    @Enumerated(EnumType.STRING)
+    private PlaceStatus status;
 }
