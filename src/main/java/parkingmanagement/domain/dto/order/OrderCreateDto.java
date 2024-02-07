@@ -1,9 +1,6 @@
-package parkingmanagement.domain.dto;
+package parkingmanagement.domain.dto.order;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -11,6 +8,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
 public class OrderCreateDto {
     private UUID carId;
     private String startTime;
