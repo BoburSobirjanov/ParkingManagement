@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import lombok.*;
 import parkingmanagement.domain.entity.BaseEntity;
 
+
 @Entity(name = "tariff")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,4 +14,6 @@ import parkingmanagement.domain.entity.BaseEntity;
 public class TariffEntity extends BaseEntity {
     private String name;
     private Double price;
+    private Double duration;
+    private TariffStatus status;
 }

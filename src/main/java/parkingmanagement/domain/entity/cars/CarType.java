@@ -1,9 +1,11 @@
 package parkingmanagement.domain.entity.cars;
 
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@AllArgsConstructor
 public enum CarType {
-    TRUCK,
-    SEDAN
+    TRUCK(3.0),
+    SEDAN(1.0);
+    private final double amount;
 }

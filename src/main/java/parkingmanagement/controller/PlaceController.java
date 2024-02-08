@@ -3,15 +3,14 @@ package parkingmanagement.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import parkingmanagement.domain.dto.place.PlaceCreateDto;
 import parkingmanagement.domain.dto.place.PlaceForUser;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.service.PlaceService;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +24,13 @@ public class PlaceController {
             @RequestBody PlaceCreateDto placeCreateDto
             ){
         return placeService.save(placeCreateDto);
+    }
+
+    @DeleteMapping("/{placeId}/delete")
+    @PreAuthorize(value = "(hasRole('ADMIN'))")
+    public StandardResponse<String> delete(
+            @PathVariable UUID placeId
+            ){
+     return placeService.delete(placeId);
     }
 }
