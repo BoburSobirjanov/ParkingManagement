@@ -16,12 +16,12 @@ import java.util.List;
 @Setter
 @Builder
 public class OrderEntity extends BaseEntity {
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private String carNumber;
     @Enumerated(EnumType.STRING)
     private CarType type;
-    @ManyToMany
-    private List<PlaceEntity> placeId;
+    @ManyToOne
+    private PlaceEntity placeId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Double amount;

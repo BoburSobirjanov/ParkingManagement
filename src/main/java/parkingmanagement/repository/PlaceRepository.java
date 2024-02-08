@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.domain.entity.place.PlaceType;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 @Repository
@@ -13,4 +14,5 @@ public interface PlaceRepository extends JpaRepository<PlaceEntity, UUID> {
     Optional<PlaceEntity> findPlaceEntityByPlace(String place);
     Optional<PlaceEntity> findPlaceEntityByFloor(String floor);
    PlaceEntity findPlaceEntityById(UUID id);
+   List<PlaceEntity> findPlaceEntityByType(String status);
 }

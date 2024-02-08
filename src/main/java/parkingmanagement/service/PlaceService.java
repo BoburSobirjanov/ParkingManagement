@@ -6,10 +6,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import parkingmanagement.domain.dto.place.PlaceCreateDto;
 import parkingmanagement.domain.dto.place.PlaceForUser;
+import parkingmanagement.domain.entity.orders.OrderEntity;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.domain.entity.place.PlaceStatus;
 import parkingmanagement.domain.entity.place.PlaceType;
-import parkingmanagement.exception.DataHasAlreadyExistException;
 import parkingmanagement.exception.DataNotFoundException;
 import parkingmanagement.exception.NotAcceptableException;
 import parkingmanagement.exception.UserBadRequestException;
@@ -18,7 +18,6 @@ import parkingmanagement.repository.PlaceRepository;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.response.Status;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +35,8 @@ public class PlaceService {
         placeEntity.setFloor(placeCreateDto.getFloor());
         placeEntity.setPlace(placeCreateDto.getPlace());
         placeEntity.setStatus(PlaceStatus.EMPTY);
+        List<OrderEntity> orderEntities = orderRepository.findOrderEntityById(placeEntity.getId());
+        placeEntity.setOrders(orderEntities);
         try {
             placeEntity.setType(PlaceType.valueOf(String.valueOf(placeCreateDto.getType())));
         }catch (Exception e){
@@ -65,5 +66,22 @@ public class PlaceService {
                 .message("The place is temporarily unavailable!")
                 .data("Place has deleted successfully!")
                 .build();
+    }
+
+    public List<PlaceEntity> getAll(){
+        return placeRepository.findAll();
+    }
+
+    public List<PlaceEntity> getPlaceByType(String type){
+        if (!(type.equals(PlaceType.SEDAN) || type.equals(PlaceType.TRUCK))){
+            log.error("Wrong type!");
+            throw new UserBadRequestException("Type not found!");
+        }
+        List<PlaceEntity> placeEntities = placeRepository.findPlaceEntityByType(type);
+        if (placeEntities==null){
+            log.error("Place not found same this type!");
+            throw new DataNotFoundException("Not found!");
+        }
+        return placeRepository.findPlaceEntityByType(type);
     }
 }

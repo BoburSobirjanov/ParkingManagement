@@ -10,6 +10,7 @@ import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.service.PlaceService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,5 +33,17 @@ public class PlaceController {
             @PathVariable UUID placeId
             ){
      return placeService.delete(placeId);
+    }
+
+    @GetMapping("/get-all")
+    public List<PlaceEntity> getAllPlace(){
+        return placeService.getAll();
+    }
+
+    @PostMapping("/get-by-type")
+    public List<PlaceEntity> getByType(
+            @RequestParam String type
+    ){
+        return placeService.getPlaceByType(type);
     }
 }

@@ -27,7 +27,6 @@ public class AuthController {
             @RequestBody UserCreateDto userCreateDto,
             BindingResult bindingResult
             ) throws RequestValidationException{
-        System.out.println("000000000000000000000000000000");
         if (bindingResult.hasErrors()){
         List<ObjectError> allErrors = bindingResult.getAllErrors();
          throw new RequestValidationException(allErrors);
