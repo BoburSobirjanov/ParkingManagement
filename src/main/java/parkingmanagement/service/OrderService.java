@@ -38,11 +38,17 @@ public class OrderService {
             log.error("Place not found!");
             throw new DataNotFoundException("Place not found!");
         }
+        if (!checkTypes(String.valueOf(placeEntity.getType()), orderCreateDto.getType())){
+            log.error("Place and car types are not the same!");
+            throw new NotAcceptableException("Place and car types are not the same");
+        }
         if (placeEntity.getStatus() == PlaceStatus.BUSY){
             log.error("Place is busy now!");
             throw new NotAcceptableException("Place is not available now!");
         }
         OrderEntity orderEntity = modelMapper.map(orderCreateDto, OrderEntity.class);
+        placeEntity.setStatus(PlaceStatus.BUSY);
+        orderEntity.setPlaceId(placeEntity);
         orderEntity.setType(CarType.valueOf(orderCreateDto.getType()));
         orderEntity.setStatus(OrderStatus.PROGRESS);
         orderEntity.setCarNumber(orderCreateDto.getCarNumber());
@@ -59,10 +65,12 @@ public class OrderService {
       OrderEntity orderEntity=orderRepository.findOrderEntityByCarNumberAndStatus(carNumber,OrderStatus.PROGRESS);
       if (orderEntity==null){
           log.error("Order not found!");
-          throw new DataNotFoundException("Order not found same this!");
+          throw new DataNotFoundException("Order not found same this or this order is busy now!");
       }
         orderEntity.setEndTime(LocalDateTime.now());
         double duration=ChronoUnit.MINUTES.between(orderEntity.getStartTime(),orderEntity.getEndTime());
+        PlaceEntity placeEntity = placeRepository.findPlaceEntityById(orderEntity.getPlaceId().getId());
+        placeEntity.setStatus(PlaceStatus.EMPTY);
         orderEntity.setAmount(duration*orderEntity.getType().getAmount());
         orderEntity.setStatus(OrderStatus.COMPLETED);
         orderRepository.save(orderEntity);
@@ -72,5 +80,8 @@ public class OrderService {
                 .message("Order closed successfully!")
                 .data(orderForUser)
                 .build();
+    }
+    public boolean checkTypes(String type1, String type2){
+        return type1.equals(type2);
     }
 }

@@ -18,7 +18,7 @@ public class PlaceEntity extends BaseEntity {
     private String place;
     @Enumerated(EnumType.STRING)
     private PlaceType type;
-    @ManyToMany
+    @OneToMany
     private List<OrderEntity> orders;
     @Enumerated(EnumType.STRING)
     private PlaceStatus status;

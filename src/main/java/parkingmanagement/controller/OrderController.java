@@ -19,7 +19,7 @@ public class OrderController {
 
 
     @PostMapping("/{placeId}/save")
-    @PreAuthorize(value = "hasRole('EMPLOYER')")
+    @PreAuthorize(value = "hasRole('EMPLOYER')or hasRole('ADMIN')")
     public StandardResponse<OrderForUser> save(
             @RequestBody OrderCreateDto orderCreateDto,
             @PathVariable UUID placeId
@@ -28,7 +28,7 @@ public class OrderController {
     }
 
     @PutMapping("/close-order")
-    @PreAuthorize(value = "hasRole('EMPLOYER')")
+    @PreAuthorize(value = "hasRole('EMPLOYER')or hasRole('ADMIN')")
     public StandardResponse<OrderForUser> close(
             @RequestParam String carNumber
     ){

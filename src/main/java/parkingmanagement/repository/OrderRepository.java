@@ -13,4 +13,5 @@ public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
     Optional<OrderEntity> findOrderEntitiesByCarNumber(String number);
     OrderEntity findOrderEntityByCarNumberAndStatus(String number,OrderStatus status);
     List<OrderEntity> findOrderEntitiesByStatus(OrderStatus status);
+    List<OrderEntity> findOrderEntityById(UUID id);
 }
