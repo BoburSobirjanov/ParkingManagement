@@ -5,5 +5,6 @@ import lombok.Getter;
 @Getter
 public enum PlaceStatus {
     EMPTY,
-    BUSY
+    BUSY,
+    NOT_WORK
 }

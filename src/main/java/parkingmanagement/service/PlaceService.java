@@ -10,6 +10,7 @@ import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.domain.entity.place.PlaceStatus;
 import parkingmanagement.domain.entity.place.PlaceType;
 import parkingmanagement.exception.DataHasAlreadyExistException;
+import parkingmanagement.exception.DataNotFoundException;
 import parkingmanagement.exception.NotAcceptableException;
 import parkingmanagement.exception.UserBadRequestException;
 import parkingmanagement.repository.OrderRepository;
@@ -19,6 +20,7 @@ import parkingmanagement.response.Status;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,5 +53,17 @@ public class PlaceService {
         if (placeRepository.findPlaceEntityByPlace(place).isPresent() && placeRepository.findPlaceEntityByFloor(floor).isPresent()) {
             throw new UserBadRequestException("Place has already exists");
         }
+    }
+
+    public StandardResponse<String> delete(UUID placeId){
+        PlaceEntity placeEntity = placeRepository.findById(placeId)
+                .orElseThrow(()-> new DataNotFoundException("Place not found!"));
+        placeEntity.setStatus(PlaceStatus.NOT_WORK);
+        placeRepository.save(placeEntity);
+        return StandardResponse.<String>builder()
+                .status(Status.SUCCESS)
+                .message("The place is temporarily unavailable!")
+                .data("Place has deleted successfully!")
+                .build();
     }
 }

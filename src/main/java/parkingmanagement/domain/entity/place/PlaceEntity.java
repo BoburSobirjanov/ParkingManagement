@@ -1,9 +1,6 @@
 package parkingmanagement.domain.entity.place;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 import parkingmanagement.domain.entity.BaseEntity;
 import parkingmanagement.domain.entity.orders.OrderEntity;
@@ -21,7 +18,7 @@ public class PlaceEntity extends BaseEntity {
     private String place;
     @Enumerated(EnumType.STRING)
     private PlaceType type;
-    @OneToMany
+    @ManyToMany
     private List<OrderEntity> orders;
     @Enumerated(EnumType.STRING)
     private PlaceStatus status;

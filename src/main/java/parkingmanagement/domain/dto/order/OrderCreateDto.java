@@ -1,6 +1,7 @@
 package parkingmanagement.domain.dto.order;
 
 import lombok.*;
+import parkingmanagement.domain.entity.cars.CarType;
 
 import java.util.UUID;
 
@@ -10,9 +11,7 @@ import java.util.UUID;
 @Getter
 @Builder
 public class OrderCreateDto {
-    private UUID carId;
-    private String startTime;
-    private String endTime;
-    private Double amount;
-    private UUID placeId;
+    private String carNumber;
+    private String type;
+    private String placeId;
 }

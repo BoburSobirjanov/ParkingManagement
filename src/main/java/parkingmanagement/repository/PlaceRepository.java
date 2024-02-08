@@ -12,4 +12,5 @@ public interface PlaceRepository extends JpaRepository<PlaceEntity, UUID> {
     Optional<PlaceEntity> findPlaceEntityByType(PlaceType type);
     Optional<PlaceEntity> findPlaceEntityByPlace(String place);
     Optional<PlaceEntity> findPlaceEntityByFloor(String floor);
+   PlaceEntity findPlaceEntityById(UUID id);
 }

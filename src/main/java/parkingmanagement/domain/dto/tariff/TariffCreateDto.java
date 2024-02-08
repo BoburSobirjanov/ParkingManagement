@@ -10,4 +10,5 @@ import lombok.*;
 public class TariffCreateDto {
     private String name;
     private Double price;
+    private Double duration;
 }
