@@ -72,14 +72,10 @@ public class PlaceService {
         return placeRepository.findAll();
     }
 
-    public List<PlaceEntity> getPlaceByType(String type){
-        if (!(type.equals(PlaceType.SEDAN) || type.equals(PlaceType.TRUCK))){
-            log.error("Wrong type!");
-            throw new UserBadRequestException("Type not found!");
-        }
+    public List<PlaceEntity> getPlaceByType(PlaceType type){
         List<PlaceEntity> placeEntities = placeRepository.findPlaceEntityByType(type);
         if (placeEntities==null){
-            log.error("Place not found same this type!");
+            log.error("Place not found same this type! Please, try again or check type");
             throw new DataNotFoundException("Not found!");
         }
         return placeRepository.findPlaceEntityByType(type);

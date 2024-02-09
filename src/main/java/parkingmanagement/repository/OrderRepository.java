@@ -10,8 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
-    Optional<OrderEntity> findOrderEntitiesByCarNumber(String number);
     OrderEntity findOrderEntityByCarNumberAndStatus(String number,OrderStatus status);
     List<OrderEntity> findOrderEntitiesByStatus(OrderStatus status);
     List<OrderEntity> findOrderEntityById(UUID id);
+    List<OrderEntity> findOrderEntityByCarNumber(String carNumber);
 }

@@ -53,4 +53,10 @@ public class GlobalExceptionHandler {
             UserBadRequestException e){
         return ResponseEntity.status(400).body(StandardResponse.<String>builder().status(Status.ERROR).message(e.getMessage()).build());
     }
+
+    @ExceptionHandler(value = {NotAcceptableException.class})
+    public ResponseEntity<StandardResponse<String>> notAcceptableExceptionHandler(
+            NotAcceptableException e){
+        return ResponseEntity.status(400).body(StandardResponse.<String>builder().status(Status.ERROR).message(e.getMessage()).build());
+    }
 }
