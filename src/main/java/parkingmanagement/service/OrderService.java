@@ -20,8 +20,6 @@ import parkingmanagement.response.Status;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,6 +32,11 @@ public class OrderService {
 
     public StandardResponse<OrderForUser> save(OrderCreateDto orderCreateDto,UUID placeId){
         PlaceEntity placeEntity = placeRepository.findPlaceEntityById(placeId);
+        OrderEntity order = orderRepository.findOrderEntityByCarNumberAndStatus(orderCreateDto.getCarNumber(), OrderStatus.PROGRESS);
+        if (order!=null){
+            log.error("This car is placed in another place. Please complete the order first!");
+            throw new NotAcceptableException("Unavailable action! Please, check this car's orders!");
+        }
         if (placeEntity==null){
             log.error("Place not found!");
             throw new DataNotFoundException("Place not found!");

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import parkingmanagement.domain.dto.place.PlaceCreateDto;
 import parkingmanagement.domain.dto.place.PlaceForUser;
 import parkingmanagement.domain.entity.place.PlaceEntity;
+import parkingmanagement.domain.entity.place.PlaceType;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.service.PlaceService;
 
@@ -42,7 +43,7 @@ public class PlaceController {
 
     @PostMapping("/get-by-type")
     public List<PlaceEntity> getByType(
-            @RequestParam String type
+            @RequestParam PlaceType type
     ){
         return placeService.getPlaceByType(type);
     }
