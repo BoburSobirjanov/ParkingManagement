@@ -11,9 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import parkingmanagement.domain.entity.BaseEntity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 @Entity(name = "users")
@@ -32,6 +31,10 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String number;
     @Enumerated(EnumType.STRING)
     private UserRole role;
+    @Column(columnDefinition = "boolean default false")
+    private boolean is_deleted;
+    private UUID deleted_by;
+    private LocalDateTime deleted_time;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

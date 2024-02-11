@@ -1,11 +1,11 @@
 package parkingmanagement.domain.dto.tariff;
 
 import lombok.*;
-import parkingmanagement.domain.entity.tariff.TariffStatus;
 
 import java.util.UUID;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder
@@ -14,5 +14,4 @@ public class TariffForUser {
     private String name;
     private Double price;
     private Double duration;
-    private TariffStatus status;
 }

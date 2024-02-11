@@ -7,7 +7,6 @@ import parkingmanagement.domain.entity.cars.CarType;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity(name = "orders")
 @AllArgsConstructor
@@ -21,10 +20,12 @@ public class OrderEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CarType type;
     @ManyToOne
-    private PlaceEntity placeId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private PlaceEntity place_id;
+    private LocalDateTime start_time;
+    private LocalDateTime end_time;
     private Double amount;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod method;
 }

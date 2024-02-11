@@ -19,7 +19,8 @@ import parkingmanagement.response.StandardResponse;
 import parkingmanagement.response.Status;
 import parkingmanagement.service.auth.JwtService;
 
-import java.util.Optional;
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -87,13 +88,17 @@ public StandardResponse<JwtResponse> signIn(LoginDto loginDto){
              throw new AuthenticationFailedException("Something error during login!");
     }
   }
-  public StandardResponse<String> deleteUser(String email){
+  public StandardResponse<String> deleteUser(String email, Principal principal){
         UserEntity user = userRepository.findUserEntityByEmail(email);
-        if (user==null){
-            log.error("User not found!");
-            throw new DataNotFoundException("Not found!");
-        }
-        userRepository.delete(user);
+      if (user==null){
+          log.error("User not found!");
+          throw new DataNotFoundException("Not found!");
+      }
+        user.set_deleted(true);
+        UserEntity userEntity =userRepository.findUserEntityByEmail(principal.getName());
+        user.setDeleted_by(userEntity.getId());
+        user.setDeleted_time(LocalDateTime.now());
+        userRepository.save(user);
         return StandardResponse.<String>builder()
                 .status(Status.SUCCESS)
                 .message("User deleted successfully!")
@@ -103,10 +108,10 @@ public StandardResponse<JwtResponse> signIn(LoginDto loginDto){
 
   public StandardResponse<UserForUser> addAdmin(String email){
         UserEntity user = userRepository.findUserEntityByEmail(email);
-        if (user==null){
-            log.error("User not found!");
-            throw new DataNotFoundException("Not found!");
-        }
+      if (user==null){
+          log.error("User not found!");
+          throw new DataNotFoundException("Not found!");
+      }
         user.setRole(UserRole.ADMIN);
         userRepository.save(user);
         UserForUser userForUser = modelMapper.map(user, UserForUser.class);
@@ -119,6 +124,9 @@ public StandardResponse<JwtResponse> signIn(LoginDto loginDto){
 
   public StandardResponse<UserEntity> getUserById(UUID id){
         UserEntity userEntity = userRepository.getById(id);
+        if (userEntity==null){
+            throw new DataNotFoundException("User not found!");
+        }
         return StandardResponse.<UserEntity>builder()
                 .status(Status.SUCCESS)
                 .message("User get!")
