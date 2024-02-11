@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Builder
 public class OrderCreateDto {
-    private String carNumber;
+    private String car_number;
     private String type;
-    private String placeId;
+    private String place_id;
 }

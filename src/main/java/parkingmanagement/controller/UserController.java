@@ -8,6 +8,7 @@ import parkingmanagement.domain.entity.user.UserEntity;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.service.UserService;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @RestController
@@ -19,9 +20,10 @@ public class UserController {
     @DeleteMapping("/delete")
     @PreAuthorize(value = "hasRole('ADMIN')")
     public StandardResponse<String> deleteUser(
-            @RequestParam String email
+            @RequestParam String email,
+            Principal principal
     ){
-        return userService.deleteUser(email);
+        return userService.deleteUser(email,principal);
     }
     @PutMapping("/add-admin")
     @PreAuthorize(value = "hasRole('OWNER')")

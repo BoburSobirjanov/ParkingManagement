@@ -14,9 +14,9 @@ import java.util.UUID;
 @Builder
 public class OrderForUser {
     private UUID id;
-    private String carNumber;
+    private String car_number;
     private CarType type;
-    private UUID placeId;
-    private LocalDateTime startTime;
+    private UUID place_id;
+    private LocalDateTime start_time;
     private OrderStatus status;
 }
