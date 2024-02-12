@@ -12,15 +12,17 @@ import parkingmanagement.domain.entity.orders.PaymentMethod;
 import parkingmanagement.domain.entity.orders.OrderStatus;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.domain.entity.place.PlaceStatus;
+import parkingmanagement.domain.entity.user.UserEntity;
 import parkingmanagement.exception.DataNotFoundException;
 import parkingmanagement.exception.NotAcceptableException;
-import parkingmanagement.repository.OrderRepository;
-import parkingmanagement.repository.PlaceRepository;
+import parkingmanagement.repository.*;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.response.Status;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,10 +32,12 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PlaceRepository placeRepository;
     private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
 
-    public StandardResponse<OrderForUser> save(OrderCreateDto orderCreateDto,UUID placeId){
+    public StandardResponse<OrderForUser> save(OrderCreateDto orderCreateDto, UUID placeId, Principal principal){
+        UserEntity user = userRepository.findUserEntityByEmail(principal.getName());
         PlaceEntity placeEntity = placeRepository.findPlaceEntityById(placeId);
-        OrderEntity order = orderRepository.findOrderEntityByCarNumberAndStatus(orderCreateDto.getCar_number(), OrderStatus.PROGRESS);
+        OrderEntity order = orderRepository.findOrderEntityByCarNumberAndStatus(orderCreateDto.getCar_number());
         if (order!=null){
             log.error("This car is placed in another place. Please complete the order first!");
             throw new NotAcceptableException("Unavailable action! Please, check this car's orders!");
@@ -55,10 +59,11 @@ public class OrderService {
         orderEntity.setPlace_id(placeEntity);
         orderEntity.setType(CarType.valueOf(orderCreateDto.getType()));
         orderEntity.setStatus(OrderStatus.PROGRESS);
-        orderEntity.setCarNumber(orderCreateDto.getCar_number());
+        orderEntity.setCar_number(orderCreateDto.getCar_number());
         orderEntity.setStart_time(LocalDateTime.now());
-        OrderForUser orderForUser = modelMapper.map(orderEntity,OrderForUser.class);
+        orderEntity.setCreated_by(user.getId());
         orderRepository.save(orderEntity);
+        OrderForUser orderForUser = modelMapper.map(orderEntity,OrderForUser.class);
         return StandardResponse.<OrderForUser>builder()
                 .status(Status.SUCCESS)
                 .message("Order created successfully!")
@@ -66,7 +71,7 @@ public class OrderService {
                 .build();
     }
     public StandardResponse<OrderForUser> closeOrder(String carNumber){
-      OrderEntity orderEntity=orderRepository.findOrderEntityByCarNumberAndStatus(carNumber,OrderStatus.PROGRESS);
+      OrderEntity orderEntity=orderRepository.findOrderEntityByCarNumberAndStatus(carNumber);
       if (orderEntity==null){
           log.error("Order not found!");
           throw new DataNotFoundException("Order not found same this or this order is busy now!");
@@ -89,4 +94,27 @@ public class OrderService {
     public boolean checkTypes(String type1, String type2){
         return type1.equals(type2);
     }
+
+    public StandardResponse<OrderForUser> delete(UUID orderId, Principal principal){
+        OrderEntity orderEntity= orderRepository.findOrderEntityById(orderId);
+        UserEntity userEntity = userRepository.findUserEntityByEmail(principal.getName());
+        orderEntity.set_deleted(true);
+        orderEntity.setDeleted_by(userEntity.getId());
+        orderEntity.setDeleted_time(LocalDateTime.now());
+        OrderForUser orderForUser= modelMapper.map(orderEntity, OrderForUser.class);
+        return StandardResponse.<OrderForUser>builder()
+                .status(Status.SUCCESS)
+                .message("Order deleted!")
+                .data(orderForUser)
+                .build();
+    }
+
+    public List<OrderForUser> getCarOrders(String number){
+        List<OrderForUser> orderForUsers = orderRepository.findOrderEntityByCarNumber(number);
+        if (orderForUsers==null){
+            throw new DataNotFoundException("Orders not found!");
+        }
+        return orderForUsers;
+    }
+
 }

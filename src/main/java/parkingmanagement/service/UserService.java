@@ -106,6 +106,21 @@ public StandardResponse<JwtResponse> signIn(LoginDto loginDto){
                 .build();
   }
 
+  public StandardResponse<UserForUser> removeAdmin(String email){
+        UserEntity user = userRepository.findUserEntityByEmail(email);
+        if (user==null){
+            throw new DataNotFoundException("User not found!");
+        }
+        user.setRole(UserRole.EMPLOYER);
+        userRepository.save(user);
+        UserForUser userForUser = modelMapper.map(user,UserForUser.class);
+        return StandardResponse.<UserForUser>builder()
+                .status(Status.SUCCESS)
+                .message("Role changed successfully!")
+                .data(userForUser)
+                .build();
+  }
+
   public StandardResponse<UserForUser> addAdmin(String email){
         UserEntity user = userRepository.findUserEntityByEmail(email);
       if (user==null){

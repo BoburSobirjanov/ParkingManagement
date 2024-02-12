@@ -7,6 +7,7 @@ import parkingmanagement.domain.entity.cars.CarType;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity(name = "orders")
 @AllArgsConstructor
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderEntity extends BaseEntity {
     @Column(nullable = false)
-    private String carNumber;
+    private String car_number;
     @Enumerated(EnumType.STRING)
     private CarType type;
     @ManyToOne
@@ -28,4 +29,9 @@ public class OrderEntity extends BaseEntity {
     private OrderStatus status;
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;
+    private UUID created_by;
+    private UUID deleted_by;
+    private LocalDateTime deleted_time;
+    @Column(columnDefinition = "boolean default false")
+    private boolean is_deleted;
 }

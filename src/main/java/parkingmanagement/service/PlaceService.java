@@ -6,18 +6,20 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import parkingmanagement.domain.dto.place.PlaceCreateDto;
 import parkingmanagement.domain.dto.place.PlaceForUser;
-import parkingmanagement.domain.entity.orders.OrderEntity;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.domain.entity.place.PlaceStatus;
 import parkingmanagement.domain.entity.place.PlaceType;
+import parkingmanagement.domain.entity.user.UserEntity;
 import parkingmanagement.exception.DataNotFoundException;
 import parkingmanagement.exception.NotAcceptableException;
 import parkingmanagement.exception.UserBadRequestException;
-import parkingmanagement.repository.OrderRepository;
 import parkingmanagement.repository.PlaceRepository;
+import parkingmanagement.repository.UserRepository;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.response.Status;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,16 +29,17 @@ import java.util.UUID;
 public class PlaceService {
     private final PlaceRepository placeRepository;
     private final ModelMapper modelMapper;
-    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
-    public StandardResponse<PlaceForUser> save(PlaceCreateDto placeCreateDto){
+    public StandardResponse<PlaceForUser> save(PlaceCreateDto placeCreateDto, Principal principal){
+        UserEntity userEntity = userRepository.findUserEntityByEmail(principal.getName());
         checkHasPlace(placeCreateDto.getPlace(), placeCreateDto.getFloor());
         PlaceEntity placeEntity = modelMapper.map(placeCreateDto, PlaceEntity.class);
         placeEntity.setFloor(placeCreateDto.getFloor());
+        placeEntity.setCreated_by(userEntity.getId());
         placeEntity.setPlace(placeCreateDto.getPlace());
         placeEntity.setStatus(PlaceStatus.EMPTY);
-        List<OrderEntity> orderEntities = orderRepository.findOrderEntityById(placeEntity.getId());
-        placeEntity.setOrders(orderEntities);
+        placeEntity.setCreated_by(userEntity.getId());
         try {
             placeEntity.setType(PlaceType.valueOf(String.valueOf(placeCreateDto.getType())));
         }catch (Exception e){
@@ -56,10 +59,16 @@ public class PlaceService {
         }
     }
 
-    public StandardResponse<String> delete(UUID placeId){
-        PlaceEntity placeEntity = placeRepository.findById(placeId)
-                .orElseThrow(()-> new DataNotFoundException("Place not found!"));
+    public StandardResponse<String> delete(UUID placeId,Principal principal){
+        UserEntity userEntity = userRepository.findUserEntityByEmail(principal.getName());
+        PlaceEntity placeEntity = placeRepository.findPlaceEntityById(placeId);
+        if (placeEntity==null){
+            throw new DataNotFoundException("Place not found!");
+        }
         placeEntity.setStatus(PlaceStatus.NOT_WORK);
+        placeEntity.setDeleted_by(userEntity.getId());
+        placeEntity.setDeleted_time(LocalDateTime.now());
+        placeEntity.set_deleted(true);
         placeRepository.save(placeEntity);
         return StandardResponse.<String>builder()
                 .status(Status.SUCCESS)
@@ -68,8 +77,12 @@ public class PlaceService {
                 .build();
     }
 
-    public List<PlaceEntity> getAll(){
-        return placeRepository.findAll();
+    public List<PlaceForUser> getAll(){
+       List<PlaceForUser> placeEntities = placeRepository.getAll();
+       if (placeEntities==null){
+           throw new DataNotFoundException("Places not found!");
+       }
+       return placeEntities;
     }
 
     public List<PlaceEntity> getPlaceByType(PlaceType type){
