@@ -32,6 +32,14 @@ public class UserController {
     ){
         return userService.addAdmin(email);
     }
+
+    @PutMapping("/remove-admin")
+    @PreAuthorize(value = "hasRole('OWNER')")
+    public StandardResponse<UserForUser> removeAdmin(
+            @RequestParam String email
+    ){
+        return userService.removeAdmin(email);
+    }
     @GetMapping("{id}/get-user")
     @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     public StandardResponse<UserEntity> getUserById(

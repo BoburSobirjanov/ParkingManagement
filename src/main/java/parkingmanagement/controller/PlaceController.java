@@ -2,7 +2,6 @@ package parkingmanagement.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import parkingmanagement.domain.dto.place.PlaceCreateDto;
 import parkingmanagement.domain.dto.place.PlaceForUser;
@@ -11,6 +10,7 @@ import parkingmanagement.domain.entity.place.PlaceType;
 import parkingmanagement.response.StandardResponse;
 import parkingmanagement.service.PlaceService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,21 +23,23 @@ public class PlaceController {
     @PostMapping("/save")
     @PreAuthorize(value = "hasRole('ADMIN')")
     public StandardResponse<PlaceForUser> save(
-            @RequestBody PlaceCreateDto placeCreateDto
+            @RequestBody PlaceCreateDto placeCreateDto,
+            Principal principal
             ){
-        return placeService.save(placeCreateDto);
+        return placeService.save(placeCreateDto,principal);
     }
 
     @DeleteMapping("/{placeId}/delete")
     @PreAuthorize(value = "(hasRole('ADMIN'))")
     public StandardResponse<String> delete(
-            @PathVariable UUID placeId
+            @PathVariable UUID placeId,
+            Principal principal
             ){
-     return placeService.delete(placeId);
+     return placeService.delete(placeId,principal);
     }
 
     @GetMapping("/get-all")
-    public List<PlaceEntity> getAllPlace(){
+    public List<PlaceForUser> getAllPlace(){
         return placeService.getAll();
     }
 
