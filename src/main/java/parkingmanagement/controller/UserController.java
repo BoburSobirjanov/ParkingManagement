@@ -18,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @DeleteMapping("/delete")
-    @PreAuthorize(value = "hasRole('ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN')or hasRole('OWNER')")
     public StandardResponse<String> deleteUser(
             @RequestParam String email,
             Principal principal

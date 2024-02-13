@@ -5,7 +5,8 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 public enum CarType {
-    TRUCK(3.0),
-    SEDAN(1.0);
+    TRUCK(5.0),
+    SEDAN(3.0),
+    BIKE(1.0);
     private final double amount;
 }
