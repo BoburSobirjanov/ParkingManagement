@@ -21,7 +21,7 @@ public class PlaceController {
     private final PlaceService placeService;
 
     @PostMapping("/save")
-    @PreAuthorize(value = "hasRole('ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('OWNER')")
     public StandardResponse<PlaceForUser> save(
             @RequestBody PlaceCreateDto placeCreateDto,
             Principal principal
@@ -30,7 +30,7 @@ public class PlaceController {
     }
 
     @DeleteMapping("/{placeId}/delete")
-    @PreAuthorize(value = "(hasRole('ADMIN'))")
+    @PreAuthorize(value = "(hasRole('ADMIN')or hasRole('OWNER'))")
     public StandardResponse<String> delete(
             @PathVariable UUID placeId,
             Principal principal

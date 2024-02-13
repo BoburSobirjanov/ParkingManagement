@@ -12,6 +12,7 @@ import parkingmanagement.domain.entity.orders.PaymentMethod;
 import parkingmanagement.domain.entity.orders.OrderStatus;
 import parkingmanagement.domain.entity.place.PlaceEntity;
 import parkingmanagement.domain.entity.place.PlaceStatus;
+import parkingmanagement.domain.entity.tariff.Tariff_Car;
 import parkingmanagement.domain.entity.user.UserEntity;
 import parkingmanagement.exception.DataNotFoundException;
 import parkingmanagement.exception.NotAcceptableException;
@@ -33,6 +34,9 @@ public class OrderService {
     private final PlaceRepository placeRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final TariffCarRepository tariffCarRepository;
+
+
 
     public StandardResponse<OrderForUser> save(OrderCreateDto orderCreateDto, UUID placeId, Principal principal){
         UserEntity user = userRepository.findUserEntityByEmail(principal.getName());
@@ -70,7 +74,10 @@ public class OrderService {
                 .data(orderForUser)
                 .build();
     }
+
+
     public StandardResponse<OrderForUser> closeOrder(String carNumber){
+      hasTariff(carNumber);
       OrderEntity orderEntity=orderRepository.findOrderEntityByCarNumberAndStatus(carNumber);
       if (orderEntity==null){
           log.error("Order not found!");
@@ -95,6 +102,37 @@ public class OrderService {
         return type1.equals(type2);
     }
 
+
+
+    public void hasTariff(String car_number){
+        List<Tariff_Car> tariffCars = tariffCarRepository.findTariff_CarByCar_number(car_number);
+        OrderEntity orderEntity=orderRepository.findOrderEntityByCarNumberAndStatus(car_number);
+        if (orderEntity==null){
+            log.error("Order not found!");
+            throw new DataNotFoundException("Order not found same this or this order is busy now!");
+        }
+        for (Tariff_Car tariffCar:tariffCars){
+            if (tariffCar.getEnd_time().isAfter(LocalDateTime.now())){
+                PlaceEntity placeEntity = placeRepository.findPlaceEntityById(orderEntity.getPlace_id().getId());
+                placeEntity.setStatus(PlaceStatus.EMPTY);
+                orderEntity.setAmount(0.0);
+                orderEntity.setMethod(PaymentMethod.TARIFF);
+                orderEntity.setStatus(OrderStatus.COMPLETED);
+                orderEntity.setEnd_time(LocalDateTime.now());
+                orderRepository.save(orderEntity);
+            }
+        }
+        OrderForUser order = modelMapper.map(orderEntity, OrderForUser.class);
+        StandardResponse.<OrderForUser>builder()
+                .status(Status.SUCCESS)
+                .message("Order closed successfully!")
+                .data(order)
+                .build();
+    }
+
+
+
+
     public StandardResponse<OrderForUser> delete(UUID orderId, Principal principal){
         OrderEntity orderEntity= orderRepository.findOrderEntityById(orderId);
         UserEntity userEntity = userRepository.findUserEntityByEmail(principal.getName());
@@ -109,12 +147,22 @@ public class OrderService {
                 .build();
     }
 
+
+
     public List<OrderForUser> getCarOrders(String number){
         List<OrderForUser> orderForUsers = orderRepository.findOrderEntityByCarNumber(number);
         if (orderForUsers==null){
             throw new DataNotFoundException("Orders not found!");
         }
         return orderForUsers;
+    }
+
+    public List<OrderForUser> getAll(){
+        List<OrderForUser> orderEntities=orderRepository.getAll();
+        if (orderEntities==null){
+            throw new DataNotFoundException("Not orders yet!");
+        }
+        return orderEntities;
     }
 
 }

@@ -20,4 +20,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
     OrderEntity findOrderEntityById(UUID id);
     @Query(value = "select u from orders as u where u.is_deleted=false  and u.car_number=?1")
     List<OrderForUser> findOrderEntityByCarNumber(String carNumber);
+
+    @Query(value = "select u from orders as u where u.is_deleted=false")
+    List<OrderForUser> getAll();
 }

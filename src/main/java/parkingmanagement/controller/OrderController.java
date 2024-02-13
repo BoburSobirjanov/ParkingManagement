@@ -52,4 +52,9 @@ public class OrderController {
     ){
         return orderService.getCarOrders(number);
     }
+
+    @GetMapping("/get-all")
+    public List<OrderForUser> getAll(){
+        return orderService.getAll();
+    }
 }
