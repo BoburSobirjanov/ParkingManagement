@@ -26,13 +26,15 @@ import java.util.List;
 public class SecurityConfig {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
+    private final String[] permitAll = {"/swagger-ui/**", "/v3/api-docs/**", "/api/v1/auth/**"};
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((requestsConfigurer) ->
                         requestsConfigurer
-                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers(permitAll).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

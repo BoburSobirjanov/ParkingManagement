@@ -8,7 +8,6 @@ import parkingmanagement.domain.entity.orders.OrderEntity;
 import parkingmanagement.domain.entity.orders.OrderStatus;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, UUID> {
