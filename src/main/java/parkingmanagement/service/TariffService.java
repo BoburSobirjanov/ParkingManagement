@@ -20,6 +20,7 @@ import parkingmanagement.response.Status;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,7 +53,11 @@ public class TariffService {
     public void checkHasTariff(String name, Double duration){
     if (tariffRepository.findTariffEntityByName(name).isPresent() && tariffRepository.findTariffEntityByDuration(duration).isPresent()){
         throw new UserBadRequestException("Tariff has already exist!");
+      }
     }
+
+    public Optional<TariffEntity> getTariffByName(String name){
+        return tariffRepository.findTariffEntityByName(name);
     }
     public StandardResponse<Tariff_Car> assignTariffToCar(TariffCarDto tariffCarDto,Principal principal){
         UserEntity userEntity = userRepository.findUserEntityByEmail(principal.getName());
