@@ -20,7 +20,7 @@ public class PlaceEntity extends BaseEntity {
     private String place;
     @Enumerated(EnumType.STRING)
     private PlaceType type;
-    @OneToMany
+    @OneToMany(mappedBy = "id",cascade = CascadeType.ALL)
     private List<OrderEntity> orders;
     @Enumerated(EnumType.STRING)
     private PlaceStatus status;
